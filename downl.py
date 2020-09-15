@@ -1,6 +1,6 @@
 # coding: utf-8
 # NÃO TIRE A LINHA ACIMA!
-appversion = "0.3.0"
+appversion = "0.3.3"
 
 import winsound
 import requests
@@ -24,7 +24,10 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    whatoprint = f'\r{prefix} |{bar}| {percent}% {suffix}'
+    lenofwhatoprint = len(whatoprint)
+    print(whatoprint, end=endline)
+    return lenofwhatoprint
 
 
 def download(url, ondeSalvar, nomeSalvar, notificarerro = "s", notificarsucesso = "n"):
@@ -42,10 +45,11 @@ def download(url, ondeSalvar, nomeSalvar, notificarerro = "s", notificarsucesso 
 
             else:
                 total_length = int(total_length)
-                printProgressBar(0, total_length, "Baixando " + nomeSalvar," completados. " + "0" + "/" + int(total_length / 1024).__str__() + " KB", 1, 30, "█")
+                toftp = printProgressBar(0, total_length, "Baixando " + nomeSalvar," completados. " + "0" + "/" + int(total_length / 1024).__str__() + " KB", 1, 30, "█")
                 for data in r.iter_content(chunk_size=36768):
                     fopen.write(data)
-                    printProgressBar((os.stat(ondeSalvar.replace("'", "") +"\\"+ nomeSalvar + ".mp4").st_size), total_length, "Baixando " + nomeSalvar[:17]+"...", " completados. " + str(int(os.stat(ondeSalvar.replace("'", "") +"\\"+ nomeSalvar + ".mp4").st_size/1024)) + "/" + int(total_length / 1024).__str__() + " KB", 1, 30,"█")
+                    print(" " * toftp, end="\r")
+                    toftp = printProgressBar((os.stat(ondeSalvar.replace("'", "") +"\\"+ nomeSalvar + ".mp4").st_size), total_length, "Baixando " + nomeSalvar[:17]+"...", " completados. " + str(int(os.stat(ondeSalvar.replace("'", "") +"\\"+ nomeSalvar + ".mp4").st_size/1024)) + "/" + int(total_length / 1024).__str__() + " KB", 1, 30,"█")
     except Exception as e:
         if (notificarerro == "s" or notificarerro == "S"):
             winsound.MessageBeep(winsound.MB_ICONHAND)
@@ -55,6 +59,7 @@ def download(url, ondeSalvar, nomeSalvar, notificarerro = "s", notificarsucesso 
             winsound.MessageBeep(winsound.MB_ICONASTERISK)
         return "ok"
 print("Downl versão " + appversion)
+print("Por EternoÍndio")
 print("")
 scodo = download(sys.argv[1],sys.argv[2],sys.argv[3], sys.argv[4], sys.argv[5])
 if (scodo != "ok"):
